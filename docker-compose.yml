@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3'
 services:
   wordpress:
     # default port 9000 (FastCGI)
@@ -8,7 +8,8 @@ services:
       - .env
     restart: unless-stopped
     networks:
-      - wordpress
+      wp-inova:
+        ipv4_address: 192.168.100.154
     ports:
       - "9001:9001" 
     depends_on:
@@ -27,7 +28,7 @@ services:
       # WORDPRESS_CONFIG_EXTRA: |
       #          define('WP_HOME',${WP_HOME});
       #          define('WP_SITEURL', ${WP_SITEURL});
-      #          define('FORCE_SSL_ADMIN', ${FORCE_SSL});
+      #          define('FORCE_SSL_ADMIN', ${FORCE_SSL});    
 
   database:
     # default port 3306
@@ -37,7 +38,7 @@ services:
       - .env
     restart: unless-stopped
     networks:
-      - wordpress
+      - wp-inova
     ports:
       - "3306:3306"    # http
     environment:
@@ -58,7 +59,7 @@ services:
       - .env
     restart: unless-stopped
     networks:
-      - wordpress
+      - wp-inova
     depends_on:
       - wordpress
     ports:
@@ -72,6 +73,9 @@ services:
   
 
 networks:
-  wordpress:
-    name: wp-wordpress
+  wp-inova:
     driver: bridge
+    ipam:
+     config:
+       - subnet: "192.168.100.0/24"
+         gateway: 192.168.100.1
